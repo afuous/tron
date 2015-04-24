@@ -13,45 +13,58 @@
 	
 	var rubber = 10;
 	
-	var bikes = [{
-		number: 1,
-		x: width - 10,
-		y: height / 2,
-		dir: LEFT,
-		head: "white",
-		tail: "red",
-		keys: {
-			left: 37,
-			right: 39,
-			up: 38,
-			down: 40
-		}
-	}, {
-		number: 2,
-		x: 10,
-		y: height / 2,
-		dir: RIGHT,
-		head: "white",
-		tail: "green",
-		keys: {
-			left: 65,
-			right: 68,
-			up: 87,
-			down: 83
-		}
-	}];
+	var bikes;
+	var playing = false;
+	var interval;
 	
-	for(var i = 0; i < bikes.length; i++) {
-		var bike = bikes[i];
-		bike.pressed = [];
-		bike.chances = 0;
-		bike.field = [];
-		for(var j = 0; j < height; j++) {
-			bike.field.push([]);
-			for(var k = 0; k < width; k++) {
-				bike.field[j].push(false);
+	function init() {
+		playing = true;
+		document.getElementById("loser").innerHTML = "&nbsp";
+		
+		bikes = [{
+			number: 1,
+			x: width - 10,
+			y: height / 2,
+			dir: LEFT,
+			head: "white",
+			tail: "red",
+			keys: {
+				left: 37,
+				right: 39,
+				up: 38,
+				down: 40
+			}
+		}, {
+			number: 2,
+			x: 10,
+			y: height / 2,
+			dir: RIGHT,
+			head: "white",
+			tail: "green",
+			keys: {
+				left: 65,
+				right: 68,
+				up: 87,
+				down: 83
+			}
+		}];
+	
+		for(var i = 0; i < bikes.length; i++) {
+			var bike = bikes[i];
+			bike.pressed = [];
+			bike.chances = 0;
+			bike.field = [];
+			for(var j = 0; j < height; j++) {
+				bike.field.push([]);
+				for(var k = 0; k < width; k++) {
+					bike.field[j].push(false);
+				}
 			}
 		}
+	
+		interval = setInterval(function() {
+			if(physics()) draw();
+		}, 50);
 	}
 	
 	canvas.width = side * width;
@@ -59,16 +72,14 @@
 	
 	window.onkeydown = function(event) {
 		var key = (event || window.event).keyCode;
-		for(var i = 0; i < bikes.length; i++) {
+		if(playing) for(var i = 0; i < bikes.length; i++) {
 			var bike = bikes[i];
 			if(~[bike.keys.left, bike.keys.right, bike.keys.up, bike.keys.down].indexOf(key)) {
 				bike.pressed.push(key);
 			}
 		}
-		if((key == 32 || key == 13) && !playing) location.reload();
+		if((key == 32 || key == 13) && !playing) init();
 	};
-	
-	var playing = true;
 	
 	function physics() {
 		for(var i = 0; i < bikes.length; i++) {
@@ -132,8 +143,4 @@
 			ctx.fillRect(bike.x * side, bike.y * side, side, side);
 		}
 	}
-	
-	var interval = setInterval(function() {
-		if(physics()) draw();
-	}, 50);
 })();
