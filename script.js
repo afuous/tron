@@ -17,8 +17,10 @@
 	var playing = false;
 	var interval;
 	
-	function init() {
-		playing = true;
+	function init(isPageLoad) {
+		if (!isPageLoad) {
+			playing = true;
+		}
 		document.getElementById("loser").innerHTML = "&nbsp";
 		
 		bikes = [{
@@ -62,9 +64,11 @@
 			}
 		}
 	
-		interval = setInterval(function() {
-			if(physics()) draw();
-		}, 50);
+		if (!isPageLoad) {
+			interval = setInterval(function() {
+				if(physics()) draw();
+			}, 50);
+		}
 	}
 	
 	canvas.width = side * width;
@@ -114,7 +118,7 @@
 				if(bike.chances >= rubber) {
 					clearInterval(interval);
 					playing = false;
-					document.getElementById("loser").innerHTML = "Player " + bike.number + " loses";
+					document.getElementById("loser").innerHTML = "Player " + bike.number + " loses. Press space to play again.";
 					return false;
 				}
 			}
@@ -143,4 +147,8 @@
 			ctx.fillRect(bike.x * side, bike.y * side, side, side);
 		}
 	}
+
+	init(true);
+	draw();
+	document.getElementById("loser").innerHTML = "Press space to start. Left controls: WASD. Right controls: arrow keys.";
 })();
